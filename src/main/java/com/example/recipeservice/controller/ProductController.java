@@ -1,0 +1,65 @@
+package com.example.recipeservice.controller;
+
+import com.example.recipeservice.dto.Message;
+import com.example.recipeservice.dto.ProductDto;
+import com.example.recipeservice.model.Group;
+import com.example.recipeservice.model.Product;
+import com.example.recipeservice.repository.GroupRepo;
+import com.example.recipeservice.view.ProductView;
+import jakarta.persistence.EntityNotFoundException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Optional;
+
+@RestController
+@RequestMapping
+public class ProductController {
+
+    @Autowired
+    private static ProductView view;
+
+    @Autowired
+    private static GroupRepo grRepo;
+
+    @GetMapping(value = "/api/v1/product")
+    public ResponseEntity<?> getAll() {
+        return new ResponseEntity<>(view.readAll(), HttpStatusCode.valueOf(200));
+    }
+
+    @GetMapping(value = "/api/v1/product/{id}")
+    public ResponseEntity<?> get(@PathVariable Long id) {
+        Product product = view.read(id);
+        if (product.equals(null)) {
+            return notFound();
+        }
+        return new ResponseEntity<>(view.read(id), HttpStatusCode.valueOf(200));
+    }
+
+    @PostMapping(value = "/api/v1/product")
+    public ResponseEntity<?> add(@RequestBody ProductDto dto) {
+        /*if (dto.group.equals(null)) {
+            return new ResponseEntity<>(view.create(dto.name, null), HttpStatusCode.valueOf(201));
+        } */
+        Optional<Group> optionalGroup = grRepo.findById(dto.group);
+        if (optionalGroup.isEmpty()) {
+            return notFound();
+        }
+        return new ResponseEntity<>(view.create(dto.name, optionalGroup.get()), HttpStatusCode.valueOf(201));
+    }
+
+    @PatchMapping(value = "api/v1/product/{id}")
+    public ResponseEntity<?> patch(@PathVariable Long id, @RequestBody ProductDto dto) {
+        Optional<Group> optionalGroup = grRepo.findById("");
+        return ;
+    }
+
+    private ResponseEntity<?> notFound() {
+        Message result = new Message(
+                "The product does not exist",
+                "");
+        return new ResponseEntity<>(result, HttpStatusCode.valueOf(404));
+    }
+}
