@@ -1,0 +1,62 @@
+(
+    GET
+    {host}/api/v1/product
+
+    Response:
+    [
+        {
+            "name": "Абрикос",
+            "category": "Фрукты"
+        },
+        {
+            "name": "Томат",
+            "category": "Овощи"
+        },
+        ...
+    ]
+)
+
+(
+    POST
+    {host}/api/v1/product
+
+    Body:
+    {
+        "name": {name},
+        "category": {groupId}
+    }
+
+    Response:
+    {
+        /1/
+        "name": {name},
+        "category": {category}
+        /2/ "message": "Unsuccessful"
+    }
+)
+
+(
+    PATCH
+    {host}/api/v1/product/{id}
+
+    Body:
+    {
+        "name": {name}
+        "category": {category}
+    }
+
+    Response:
+    {
+        "status": bool_value
+    }
+)
+
+(
+    DELETE
+    {host}/api/v1/product/{id}
+
+    Response:
+    {
+        "status": bool_value
+    }
+)

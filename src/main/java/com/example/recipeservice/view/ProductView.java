@@ -1,7 +1,6 @@
 package com.example.recipeservice.view;
 
-import com.example.recipeservice.dto.ProductDto;
-import com.example.recipeservice.model.Group;
+import com.example.recipeservice.model.Category;
 import com.example.recipeservice.model.Product;
 import com.example.recipeservice.repository.GroupRepo;
 import com.example.recipeservice.repository.ProductRepo;
@@ -17,31 +16,31 @@ import java.util.Optional;
 public class ProductView {
 
     @Autowired
-    private static ProductRepo repo;
+    private final ProductRepo repo;
 
     @Autowired
-    private static GroupRepo grRepo;
+    private final GroupRepo grRepo;
 
     // Добавление нового продукта в таблицу
-    public Product create(String name, Group group) {
+    public Product create(String name, Category category) {
         return repo.save(Product.builder()
                 .name(name)
-                .group(group)
+                .category(category)
                 .build());
     }
 
     // Обновление информации продукта
-    public Product update(Long id, String name, Group group) {
+    public Product update(Long id, String name, Category category) {
         Optional<Product> optionalProduct = repo.findById(id);
         if (optionalProduct.isEmpty()) {
             return null;
         }
         Product product = optionalProduct.get();
-        if (!name.equals(null)) {
+        if (name != null) {
             product.setName(name);
         }
-        if (!group.equals(null)) {
-            product.setGroup(group);
+        if (category != null) {
+            product.setCategory(category);
         }
         return repo.save(product);
     }
@@ -49,10 +48,7 @@ public class ProductView {
     // Получение информации конкретного продукта
     public Product read(Long id) {
         Optional<Product> optionalProduct = repo.findById(id);
-        if (optionalProduct.isEmpty()) {
-            return null;
-        }
-        return optionalProduct.get();
+        return optionalProduct.orElse(null);
     }
 
     // Получение информации всех продуктов

@@ -2,11 +2,11 @@ package com.example.recipeservice.controller;
 
 import com.example.recipeservice.dto.Message;
 import com.example.recipeservice.dto.ProductDto;
-import com.example.recipeservice.model.Group;
+import com.example.recipeservice.model.Category;
 import com.example.recipeservice.model.Product;
 import com.example.recipeservice.repository.GroupRepo;
 import com.example.recipeservice.view.ProductView;
-import jakarta.persistence.EntityNotFoundException;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
@@ -16,13 +16,14 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping
+@AllArgsConstructor
 public class ProductController {
 
     @Autowired
-    private static ProductView view;
+    private final ProductView view;
 
     @Autowired
-    private static GroupRepo grRepo;
+    private final GroupRepo grRepo;
 
     @GetMapping(value = "/api/v1/product")
     public ResponseEntity<?> getAll() {
@@ -32,7 +33,7 @@ public class ProductController {
     @GetMapping(value = "/api/v1/product/{id}")
     public ResponseEntity<?> get(@PathVariable Long id) {
         Product product = view.read(id);
-        if (product.equals(null)) {
+        if (product == null) {
             return notFound();
         }
         return new ResponseEntity<>(view.read(id), HttpStatusCode.valueOf(200));
@@ -40,10 +41,10 @@ public class ProductController {
 
     @PostMapping(value = "/api/v1/product")
     public ResponseEntity<?> add(@RequestBody ProductDto dto) {
-        /*if (dto.group.equals(null)) {
+        if (dto.group == null) {
             return new ResponseEntity<>(view.create(dto.name, null), HttpStatusCode.valueOf(201));
-        } */
-        Optional<Group> optionalGroup = grRepo.findById(dto.group);
+        }
+        Optional<Category> optionalGroup = grRepo.findById(dto.group);
         if (optionalGroup.isEmpty()) {
             return notFound();
         }
@@ -52,8 +53,11 @@ public class ProductController {
 
     @PatchMapping(value = "api/v1/product/{id}")
     public ResponseEntity<?> patch(@PathVariable Long id, @RequestBody ProductDto dto) {
-        Optional<Group> optionalGroup = grRepo.findById("");
-        return ;
+        Optional<Category> optionalGroup = grRepo.findById(dto.group);
+        if (optionalGroup.isEmpty()) {
+            return notFound();
+        }
+        return new ResponseEntity<>(view.update(id, dto.name, optionalGroup.get()).getId(), HttpStatusCode.valueOf(200));
     }
 
     private ResponseEntity<?> notFound() {

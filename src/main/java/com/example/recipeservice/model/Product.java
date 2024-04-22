@@ -16,8 +16,9 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
+
     @ManyToOne
-    @JoinColumn(name = "id", nullable = false)
+    @JoinColumn(name = "groupId", nullable = false)
     @JsonIgnore
-    private Group group;
+    private Category category;
 }
