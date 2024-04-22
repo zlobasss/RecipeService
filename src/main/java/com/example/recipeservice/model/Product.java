@@ -18,7 +18,7 @@ public class Product {
     private String name;
 
     @ManyToOne
-    @JoinColumn(name = "groupId", nullable = false)
+    @JoinColumn(name = "categoryId", nullable = false)
     @JsonIgnore
     private Category category;
 }
